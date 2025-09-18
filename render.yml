@@ -1,0 +1,47 @@
+services:
+  # ------------------ Redis ------------------
+  - type: redis
+    name: myredis
+    ipAllowList: []
+    plan: free
+
+  # ------------------ ChromaDB ------------------
+  - type: web
+    name: chromadb
+    env: docker
+    dockerfilePath: ./Dockerfile.chroma
+    plan: starter
+    disk:
+      name: chroma-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PORT
+        value: 8000
+
+  # ------------------ Backend ------------------
+  - type: web
+    name: rag-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    plan: starter
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: myredis
+          property: connectionString
+      - key: CHROMA_HOST
+        value: http://chromadb:8000
+
+  # ------------------ Frontend ------------------
+  - type: static_site
+    name: rag-frontend
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile
+    plan: starter
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        value: https://rag-backend.onrender.com

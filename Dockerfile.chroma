@@ -1,0 +1,3 @@
+FROM chromadb/chroma
+EXPOSE 8000
+CMD ["--path", "/data"]
