@@ -8,7 +8,16 @@ const embedArticles = require("./embed.js");
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'https://rag-frontend-chj4.onrender.com',
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {

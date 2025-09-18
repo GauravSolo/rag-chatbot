@@ -1,13 +1,19 @@
 const fs = require("fs");
 const axios = require("axios");
-const { ChromaClient } = require("chromadb");
+const { CloudClient } = require("chromadb");
 
 require("dotenv").config();
 const JINA_API_KEY = process.env.JINA_API_KEY;
 const CHROMA_HOST = process.env.CHROMA_HOST;
+const CHROMA_API_KEY = process.env.CHROMA_API_KEY;
+const CHROMA_TENANT = process.env.CHROMA_TENANT;
+const CHROMA_DATABASE = process.env.CHROMA_DATABASE;
 
-const client = new ChromaClient({
-  host: CHROMA_HOST
+const client = new CloudClient({
+  host: CHROMA_HOST,
+  apiKey: CHROMA_API_KEY,
+  tenant: CHROMA_TENANT,
+  database: CHROMA_DATABASE
 });
 
 async function embedArticles() {

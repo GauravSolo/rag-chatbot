@@ -9,7 +9,7 @@ function App() {
   const [sessionId, setSessionId] = useState("");
   const [loading, setLoading] = useState(false);
   const chatBoxRef = useRef(null);
-  const API_BASE = process.env.API_BASE || "http://localhost:5001";
+  const REACT_APP_API_BASE = process.env.REACT_APP_API_BASE || "https://rag-backend-0iqq.onrender.com";
 
   useEffect(() => {
     let sid = localStorage.getItem("sessionId");
@@ -20,7 +20,7 @@ function App() {
     setSessionId(sid);
 
     axios
-      .get(`${API_BASE}/history/${sid}`)
+      .get(`${REACT_APP_API_BASE}/history/${sid}`)
       .then((res) => setChat(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -41,7 +41,7 @@ useEffect(() => {
     setMessage("");
     setLoading(true);
     try {
-      const res = await axios.post(`${API_BASE}/chat`, {
+      const res = await axios.post(`${REACT_APP_API_BASE}/chat`, {
         sessionId: sessionId,
         question: message,
       });
@@ -54,7 +54,7 @@ useEffect(() => {
   };
 
   const resetSession = async () => {
-    await axios.post(`${API_BASE}/reset`, {
+    await axios.post(`${REACT_APP_API_BASE}/reset`, {
       sessionId,
     });
     setChat([]);
@@ -70,7 +70,7 @@ useEffect(() => {
   return (
     <div className="max-w-lg mx-auto mt-12 font-sans">
       <h2 className="text-2xl font-bold mb-4 text-center text-black">
-        RAG Chatbot
+        RAG Chatbot (Ask Me About UK News)
       </h2>
       <div className="border border-gray-500 p-4 h-[60vh] mb-4 rounded-lg overflow-y-auto" ref={chatBoxRef}>
         {chat.map((c, i) => (

@@ -1,14 +1,20 @@
 const axios = require("axios");
-const { ChromaClient } = require("chromadb");
+const { CloudClient } = require("chromadb");
 const redis = require("./redis.js");
 require("dotenv").config();
 
 const JINA_API_KEY = process.env.JINA_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const CHROMA_HOST = process.env.CHROMA_HOST;
+const CHROMA_API_KEY = process.env.CHROMA_API_KEY;
+const CHROMA_TENANT = process.env.CHROMA_TENANT;
+const CHROMA_DATABASE = process.env.CHROMA_DATABASE;
 
-const client = new ChromaClient({
+const client = new CloudClient({
   host: CHROMA_HOST,
+  apiKey: CHROMA_API_KEY,
+  tenant: CHROMA_TENANT,
+  database: CHROMA_DATABASE
 });
 
 async function getAnswer(question, sessionId) {
@@ -69,15 +75,13 @@ async function getAnswer(question, sessionId) {
   redis.rpush(
     `chat:${sessionId}`,
     JSON.stringify({ role: "user", text: question }),
-    "EX",
-    600
   );
   redis.rpush(
     `chat:${sessionId}`,
     JSON.stringify({ role: "bot", text: formattedAnswer }),
-    "EX",
-    600
   );
+
+  await redis.expire(`chat:${sessionId}`, 600);
 
   console.log("Q: ", question);
   console.log("A: ", formattedAnswer);
